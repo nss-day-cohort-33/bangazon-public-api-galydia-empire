@@ -21,6 +21,7 @@ from bangazonapi.views import *
 
 
 router = routers.DefaultRouter(trailing_slash=False)
+router.register(r'users', Customers, 'user')
 router.register(r'products', Products, 'product')
 router.register(r'customers', Customers, 'customer')
 router.register(r'orders', Orders, 'order')
