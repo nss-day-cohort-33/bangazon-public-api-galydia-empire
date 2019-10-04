@@ -7,6 +7,11 @@ from rest_framework import status
 from django.contrib.auth.models import User
 from bangazonapi.models import Customer
 
+"""
+Author: Scott Silver
+Purpose: Allows user to communicate with the Bangazon database to GET PUT POST and DELETE entries.
+Methods: GET, PUT, POST, DELETE
+"""
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     """JSON serializer for users
@@ -17,50 +22,49 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     """
     class Meta:
         model = User
-        fields = ('id', 'url', 'username', 'email')
+        fields = ('id', 'url', 'username', 'first_name',
+        'last_name', 'email', 'date_joined', 'is_active')
 
 class CustomerSerializer(serializers.HyperlinkedModelSerializer):
+
     """JSON serializer for customers
 
     Arguments:
         serializers.HyperlinkedModelSerializer
     """
+
     class Meta:
         model = Customer
         url = serializers.HyperlinkedIdentityField(
             view_name='customer',
         )
-        fields = ('id', 'url', 'user_id', 'address', 'phone_number')
+        fields = ('id', 'url', 'user', 'address', 'phone_number')
         depth = 1
 
 
 class Customers(ViewSet):
     """Customers for Bangazon Galaydia Empire"""
 
-    # def create(self, request):
-    #     """Handle POST operations
-    #     Author: Scott Silver
-    #     Purpose: Allows a user to communicate with the Bangazon database to create new customer
-    #     Method:  POST
-    #     Returns:
-    #         Response -- JSON serialized Customer instance
-    #     """
-    #     new_customer = Customer()
-    #     new_customer.phone_number = request.data["phone_number"]
-    #     new_customer.address = request.data["address"]
-    #     user = User.objects.get(pk=request.data["user_id"])
-    #     new_customer.user = user
-    #     new_customer.save()
-    #     serializer = CustomerSerializer(new_customer, context={'request': request})
+    def retrieve(self, request, pk=None):
 
-    #     return Response(serializer.data)
+        """Handle GET requests for single customer
+
+        Returns:
+            Response -- JSON serialized customer instance
+        """
+        try:
+            customer = Customer.objects.get(pk=pk)
+            serializer = CustomerSerializer(customer, context={'request': request})
+            return Response(serializer.data)
+        except Exception as ex:
+            return HttpResponseServerError(ex)
 
     def update(self, request, pk=None):
 
         """Handle PUT requests for a customer
         Author: Scott Silver
         Purpose: Allows a user to communicate with the Bangazon database to update  customer's 'is_active property
-        Methods:  PUT
+        Method:  PUT
         Returns:
             Response -- Empty body with 204 status code
         """
@@ -83,16 +87,3 @@ class Customers(ViewSet):
             context={'request': request}
         )
         return Response(serializer.data)
-
-    def retrieve(self, request, pk=None):
-        """Handle GET requests for single customer
-
-        Returns:
-            Response -- JSON serialized customer instance
-        """
-        try:
-            customer = Customer.objects.get(pk=pk)
-            serializer = CustomerSerializer(customer, context={'request': request})
-            return Response(serializer.data)
-        except Exception as ex:
-            return HttpResponseServerError(ex)

@@ -28,6 +28,7 @@ class PaymentTypes(ViewSet):
     """PaymentTypes for Bangazon Galaydia Empire"""
 
     def create(self, request):
+
         """Handle POST operations
 
         Returns:
@@ -41,6 +42,7 @@ class PaymentTypes(ViewSet):
         user = User.objects.get(pk=request.data["user_id"])
         payment_type.customer = Customer.objects.get(user=user)
         payment_type.save()
+
 
         serializer = PaymentTypeSerializer(payment_type, context={'request': request})
 

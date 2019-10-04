@@ -23,6 +23,3 @@ class Order(models.Model):
         verbose_name = ("order")
         verbose_name_plural = ("orders")
 
-
-
-
