@@ -12,7 +12,7 @@ Method: None
 class PaymentType(models.Model):
 
     merchant_name = models.CharField(max_length=50)
-    account_number = models.IntegerField()
+    account_number = models.CharField(max_length=25)
     expiration_date = models.DateField()
     created_at = models.DateField()
     customer = models.ForeignKey(Customer, on_delete=models.DO_NOTHING)

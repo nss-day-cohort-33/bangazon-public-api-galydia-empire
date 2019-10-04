@@ -18,8 +18,8 @@ class Customer(models.Model):
     address = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=25)
 
-    def __str__(self):
-        return "{} {}".format(self.first_name, self.last_name)
+    # def __str__(self):
+    #     return "{} {}".format(self.first_name, self.last_name)
 
     # class Meta:
     #     ordering = (F('user.date_joined').asc(nulls_last=True),)
