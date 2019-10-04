@@ -23,7 +23,7 @@ def login_user(request):
 
         # Use the built-in authenticate method to verify
         name = req_body['username']
-        pass_word = req_body['password']
+        pass_word = req_body['pass_word']
         authenticated_user = authenticate(username=name, password=pass_word)
 
         # If authentication was successful, respond with their token
