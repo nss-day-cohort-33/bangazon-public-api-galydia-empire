@@ -9,6 +9,12 @@ from bangazonapi.models import Customer
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
+    """JSON serializer for users
+
+    Arguments:
+        serializers.HyperlinkedModelSerializer
+
+    """
     class Meta:
         model = User
         fields = ('id', 'url', 'username', 'email')
@@ -30,6 +36,39 @@ class CustomerSerializer(serializers.HyperlinkedModelSerializer):
 
 class Customers(ViewSet):
     """Customers for Bangazon Galaydia Empire"""
+
+    # def create(self, request):
+    #     """Handle POST operations
+    #     Author: Scott Silver
+    #     Purpose: Allows a user to communicate with the Bangazon database to create new customer
+    #     Method:  POST
+    #     Returns:
+    #         Response -- JSON serialized Customer instance
+    #     """
+    #     new_customer = Customer()
+    #     new_customer.phone_number = request.data["phone_number"]
+    #     new_customer.address = request.data["address"]
+    #     user = User.objects.get(pk=request.data["user_id"])
+    #     new_customer.user = user
+    #     new_customer.save()
+    #     serializer = CustomerSerializer(new_customer, context={'request': request})
+
+    #     return Response(serializer.data)
+
+    def update(self, request, pk=None):
+
+        """Handle PUT requests for a customer
+        Author: Scott Silver
+        Purpose: Allows a user to communicate with the Bangazon database to update  customer's 'is_active property
+        Methods:  PUT
+        Returns:
+            Response -- Empty body with 204 status code
+        """
+        customer = Customer.objects.get(pk=pk)
+        customer.user.is_active = False
+        customer.save()
+
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
 
     def list(self, request):
         """Handle GET requests to customers resource
