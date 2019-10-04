@@ -12,7 +12,6 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'url', 'username', 'email')
-        lookup_field = "pk"
 
 class CustomerSerializer(serializers.HyperlinkedModelSerializer):
     """JSON serializer for customers
@@ -45,3 +44,16 @@ class Customers(ViewSet):
             context={'request': request}
         )
         return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        """Handle GET requests for single customer
+
+        Returns:
+            Response -- JSON serialized customer instance
+        """
+        try:
+            customer = Customer.objects.get(pk=pk)
+            serializer = CustomerSerializer(customer, context={'request': request})
+            return Response(serializer.data)
+        except Exception as ex:
+            return HttpResponseServerError(ex)
