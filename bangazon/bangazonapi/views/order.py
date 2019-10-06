@@ -4,7 +4,8 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from bangazonapi.models import Order, Customer
+from bangazonapi.models import Order, Customer, PaymentType
+
 
 
 class OrderSerializer(serializers.HyperlinkedModelSerializer):
@@ -31,7 +32,8 @@ class Orders(ViewSet):
             Response -- JSON serialized ParkArea instance
         """
         neworder = Order()
-        neworder.created_date = request.data["created_at"]
+        neworder.created_at = request.data["created_at"]
+        neworder.paymenttype = PaymentType.objects.get(pk=request.data["paymenttype"])
         customer = Customer.objects.get(user=request.auth.user)
         neworder.customer = customer
         neworder.save()
