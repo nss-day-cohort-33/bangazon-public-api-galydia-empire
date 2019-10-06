@@ -14,13 +14,37 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
     Arguments:
         serializers.HyperlinkedModelSerializer
     """
+
+    customer = serializers.HyperlinkedRelatedField(
+        queryset=Customer.objects.all(),
+        view_name="customer-detail",
+        many=True,
+        required=False,
+        lookup_field="pk"
+    )
+    payment_type = serializers.HyperlinkedRelatedField(
+        queryset=PaymentType.objects.all(),
+        view_name="payment_type-detail",
+        many=True,
+        required=False,
+        lookup_field="pk"
+    )
+
     class Meta:
         model = Order
         url = serializers.HyperlinkedIdentityField(
             view_name='order',
             lookup_field='id'
         )
-        fields = ('id', 'url', 'created_date', 'payment_type', 'customer')
+        fields = ('id', 'url', 'created_at', 'payment_type', 'customer')
+
+
+
+
+
+
+
+
 
 
 class Orders(ViewSet):
