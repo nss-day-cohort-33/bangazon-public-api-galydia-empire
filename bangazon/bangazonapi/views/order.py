@@ -9,8 +9,11 @@ from bangazonapi.models import Order, Customer, PaymentType
 
 
 class OrderSerializer(serializers.HyperlinkedModelSerializer):
-    """JSON serializer for orders
-
+    """
+    Author: Scott Silver
+    Purpose: JSON serializer for orders with two foreign key serializers
+    for payment_type and customer to convert native Python datatypes to
+    be rendered into JSON
     Arguments:
         serializers.HyperlinkedModelSerializer
     """
@@ -39,8 +42,15 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id', 'url', 'created_at', 'payment_type', 'customer')
 
 
+
 class Orders(ViewSet):
-    """Orders for Bangazon Galaydia Empire"""
+    """Orders for Bangazon Galaydia Empire
+    Author: Scott Silver
+    Purpose: Allows user to communicate with the Bangazon
+    database to GET PUT POST and DELETE entries.
+    Methods: GET, PUT, POST, DELETE
+
+    """
 
     def create(self, request):
         """Handle POST operations
