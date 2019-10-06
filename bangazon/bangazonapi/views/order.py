@@ -60,6 +60,7 @@ class Orders(ViewSet):
         neworder = Order()
         neworder.created_at = request.data["created_at"]
         neworder.payment_type = PaymentType.objects.get(pk=request.data["payment_type"])
+        neworder.completed = False
         customer = Customer.objects.get(user=request.auth.user)
         neworder.customer = customer
         neworder.save()
