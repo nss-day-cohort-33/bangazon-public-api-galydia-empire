@@ -16,7 +16,7 @@ class Product(models.Model):
     description = models.CharField(max_length=1000)
     quantity = models.IntegerField()
     location = models.CharField(max_length=100)
-    created_at = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     customer = models.ForeignKey(Customer, on_delete=models.DO_NOTHING)
     product_type = models.ForeignKey(ProductType, on_delete=models.DO_NOTHING)
 
