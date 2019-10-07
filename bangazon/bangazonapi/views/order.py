@@ -39,7 +39,7 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
             view_name='order',
             lookup_field='id'
         )
-        fields = ('id', 'url', 'created_at', 'completed', 'payment_type', 'customer')
+        fields = ('id', 'url', 'created_at', 'payment_type', 'customer')
         depth = 1
 
 
@@ -60,7 +60,6 @@ class Orders(ViewSet):
         new_order = Order()
         new_order.created_at = request.data["created_at"]
         new_order.payment_type = PaymentType.objects.get(pk=request.data["payment_type"])
-        new_order.completed = False
         new_order.customer = Customer.objects.get(user=request.auth.user)
         new_order.save()
 
