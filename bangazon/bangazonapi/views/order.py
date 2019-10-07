@@ -11,27 +11,11 @@ from bangazonapi.models import Order, Customer, PaymentType
 class OrderSerializer(serializers.HyperlinkedModelSerializer):
     """
     Author: Scott Silver
-    Purpose: JSON serializer for orders with two foreign key serializers
-    for payment_type and customer to convert native Python datatypes to
+    Purpose: JSON serializer for orders to convert native Python datatypes to
     be rendered into JSON
     Arguments:
         serializers.HyperlinkedModelSerializer
     """
-
-    customer = serializers.HyperlinkedRelatedField(
-        queryset=Customer.objects.all(),
-        view_name="customer-detail",
-        many=True,
-        required=False,
-        lookup_field="pk"
-    )
-    payment_type = serializers.HyperlinkedRelatedField(
-        queryset=PaymentType.objects.all(),
-        view_name="payment_type-detail",
-        many=True,
-        required=False,
-        lookup_field="pk"
-    )
 
     class Meta:
         model = Order
@@ -41,7 +25,6 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
         )
         fields = ('id', 'url', 'created_at', 'payment_type', 'customer')
         depth = 1
-
 
 
 class Orders(ViewSet):
