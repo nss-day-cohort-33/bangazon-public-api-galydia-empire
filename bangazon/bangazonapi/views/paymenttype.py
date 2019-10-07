@@ -21,7 +21,7 @@ class PaymentTypeSerializer(serializers.HyperlinkedModelSerializer):
             lookup_field='id'
         )
         fields = ('id', 'url', 'merchant_name', 'account_number',
-                  'expiration_date', 'created_at', 'customer_id')
+                  'expiration_date', 'created_at', 'customer')
         depth = 1
 
 
@@ -29,7 +29,6 @@ class PaymentTypes(ViewSet):
     """PaymentTypes for Bangazon Galaydia Empire"""
 
     def create(self, request):
-
         """Handle POST operations
 
         Returns:
@@ -43,7 +42,6 @@ class PaymentTypes(ViewSet):
         user = User.objects.get(pk=request.data["user_id"])
         payment_type.customer = Customer.objects.get(user=user)
         payment_type.save()
-
 
         serializer = PaymentTypeSerializer(payment_type, context={'request': request})
 
