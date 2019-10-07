@@ -1,6 +1,5 @@
 from .register import register_user
 from .register import login_user
-from .user import Users
 from .customer import Customers
 from .order import Orders
 from .orderproduct import OrderProducts
