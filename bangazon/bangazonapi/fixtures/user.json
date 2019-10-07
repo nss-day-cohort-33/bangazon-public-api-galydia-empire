@@ -1,0 +1,62 @@
+[
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "first_name": "Sam",
+      "last_name": "Birky",
+      "email": "sam@sam.com",
+      "password": "sam",
+      "is_active": true,
+      "date_joined": "2019-09-23T14:06:30.047Z",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "sam"
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+      "first_name": "Scott",
+      "last_name": "Silver",
+      "email": "scott@scott.com",
+      "password": "scott",
+      "is_active": true,
+      "date_joined": "2019-09-23T14:06:30.047Z",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "scott"
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+      "first_name": "Jeff",
+      "last_name": "Hill",
+      "email": "jeff@jeff.com",
+      "password": "jeff",
+      "is_active": true,
+      "date_joined": "2019-09-23T14:06:30.047Z",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "jeff"
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 4,
+    "fields": {
+      "first_name": "Matthew",
+      "last_name": "Caldwell",
+      "email": "matthew@matthew.com",
+      "password": "matthew",
+      "is_active": true,
+      "date_joined": "2019-09-23T14:06:30.047Z",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "matthew"
+    }
+  }
+]

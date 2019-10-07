@@ -1,0 +1,226 @@
+[
+    {
+        "model": "bangazonapi.product",
+        "pk": 1,
+        "fields": {
+            "customer_pk": 1,
+            "product_type_pk": 1,
+            "name": "Dog",
+            "price": 200,
+            "description": "Fluffy and Nice",
+            "quantity": 6,
+            "created_at": "2019-09-23T14:06:30.047Z",
+            "location": "Nashville"
+        }
+    },
+    {
+        "model": "bangazonapi.product",
+        "pk": 2,
+        "fields": {
+            "customer_pk": 1,
+            "product_type_pk": 1,
+            "name": "Cat",
+            "price": 200,
+            "description": "Fluffy and Nice",
+            "quantity": 6,
+            "created_at": "2019-09-23T14:06:30.047Z",
+            "location": "Nashville"
+        }
+    },
+    {
+        "model": "bangazonapi.product",
+        "pk": 3,
+        "fields": {
+            "customer_pk": 1,
+            "product_type_pk": 1,
+            "name": "Bear",
+            "price": 200,
+            "description": "Fluffy and Nice",
+            "quantity": 6,
+            "created_at": "2019-09-23T14:06:30.047Z",
+            "location": "Nashville"
+        }
+    },
+    {
+        "model": "bangazonapi.product",
+        "pk": 4,
+        "fields": {
+            "customer_pk": 1,
+            "product_type_pk": 1,
+            "name": "Moose",
+            "price": 200,
+            "description": "Fluffy and Nice",
+            "quantity": 6,
+            "created_at": "2019-09-23T14:06:30.047Z",
+            "location": "Nashville"
+        }
+    },
+    {
+        "model": "bangazonapi.product",
+        "pk": 5,
+        "fields": {
+            "customer_pk": 2,
+            "product_type_pk": 1,
+            "name": "Cheetah",
+            "price": 200,
+            "description": "Fluffy and Nice",
+            "quantity": 6,
+            "created_at": "2019-09-23T14:06:30.047Z",
+            "location": "Nashville"
+        }
+    },
+    {
+        "model": "bangazonapi.product",
+        "pk": 6,
+        "fields": {
+            "customer_pk": 2,
+            "product_type_pk": 1,
+            "name": "African Wild Dog",
+            "price": 200,
+            "description": "Fluffy and Nice",
+            "quantity": 6,
+            "created_at": "2019-09-23T14:06:30.047Z",
+            "location": "Nashville"
+        }
+    },
+    {
+        "model": "bangazonapi.product",
+        "pk": 7,
+        "fields": {
+            "customer_pk": 2,
+            "product_type_pk": 1,
+            "name": "Elephant",
+            "price": 200,
+            "description": "Fluffy and Nice",
+            "quantity": 6,
+            "created_at": "2019-09-23T14:06:30.047Z",
+            "location": "Nashville"
+        }
+    },
+    {
+        "model": "bangazonapi.product",
+        "pk": 8,
+        "fields": {
+            "customer_pk": 2,
+            "product_type_pk": 1,
+            "name": "Sea Turtle",
+            "price": 200,
+            "description": "Fluffy and Nice",
+            "quantity": 6,
+            "created_at": "2019-09-23T14:06:30.047Z",
+            "location": "Nashville"
+        }
+    },
+    {
+        "model": "bangazonapi.product",
+        "pk": 9,
+        "fields": {
+            "customer_pk": 3,
+            "product_type_pk": 1,
+            "name": "Zebra",
+            "price": 200,
+            "description": "Fluffy and Nice",
+            "quantity": 6,
+            "created_at": "2019-09-23T14:06:30.047Z",
+            "location": "Nashville"
+        }
+    },
+    {
+        "model": "bangazonapi.product",
+        "pk": 10,
+        "fields":{
+            "customer_pk": 3,
+            "product_type_pk": 1,
+            "name": "Oppossum",
+            "price": 200,
+            "description": "Fluffy and Nice",
+            "quantity": 6,
+            "created_at": "2019-09-23T14:06:30.047Z",
+            "location": "Nashville"
+        }
+    },
+    {
+        "model": "bangazonapi.product",
+        "pk": 11,
+        "fields":{
+            "customer_pk": 3,
+            "product_type_pk": 1,
+            "name": "Squirrel",
+            "price": 200,
+            "description": "Fluffy and Nice",
+            "quantity": 6,
+            "created_at": "2019-09-23T14:06:30.047Z",
+            "location": "Nashville"
+        }
+    },
+    {
+        "model": "bangazonapi.product",
+        "pk": 12,
+        "fields":{
+            "customer_pk": 3,
+            "product_type_pk": 1,
+            "name": "Goat",
+            "price": 200,
+            "description": "Fluffy and Nice",
+            "quantity": 6,
+            "created_at": "2019-09-23T14:06:30.047Z",
+            "location": "Nashville"
+        }
+    },
+    {
+        "model": "bangazonapi.product",
+        "pk": 13,
+        "fields":{
+            "customer_pk": 4,
+            "product_type_pk": 1,
+            "name": "Cow",
+            "price": 200,
+            "description": "Fluffy and Nice",
+            "quantity": 6,
+            "created_at": "2019-09-23T14:06:30.047Z",
+            "location": "Nashville"
+        }
+    },
+    {
+        "model": "bangazonapi.product",
+        "pk": 14,
+        "fields":{
+            "customer_pk": 4,
+            "product_type_pk": 1,
+            "name": "Pig",
+            "price": 200,
+            "description": "Fluffy and Nice",
+            "quantity": 6,
+            "created_at": "2019-09-23T14:06:30.047Z",
+            "location": "Nashville"
+        }
+    },
+    {
+        "model": "bangazonapi.product",
+        "pk": 15,
+        "fields": {
+            "customer_pk": 4,
+            "product_type_pk": 1,
+            "name": "Fox",
+            "price": 200,
+            "description": "Fluffy and Nice",
+            "quantity": 6,
+            "created_at": "2019-09-23T14:06:30.047Z",
+            "location": "Nashville"
+        }
+    },
+    {
+        "model": "bangazonapi.product",
+        "pk": 16,
+        "fields": {
+            "customer_pk": 4,
+            "product_type_pk": 1,
+            "name": "Raccoon",
+            "price": 200,
+            "description": "Fluffy and Nice",
+            "quantity": 6,
+            "created_at": "2019-09-23T14:06:30.047Z",
+            "location": "Nashville"
+        }
+    }
+]

@@ -21,7 +21,3 @@ class Order(models.Model):
         ordering = ("customer", )
         verbose_name = ("order")
         verbose_name_plural = ("orders")
-
-
-
-
