@@ -40,6 +40,7 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
             lookup_field='id'
         )
         fields = ('id', 'url', 'created_at', 'payment_type', 'customer')
+        depth = 1
 
 
 
@@ -49,7 +50,6 @@ class Orders(ViewSet):
     Purpose: Allows user to communicate with the Bangazon
     database to GET PUT POST and DELETE entries.
     Methods: GET, PUT, POST, DELETE
-
     """
 
     def create(self, request):
@@ -57,16 +57,16 @@ class Orders(ViewSet):
         Returns:
             Response -- JSON serialized ParkArea instance
         """
-        neworder = Order()
-        neworder.created_at = request.data["created_at"]
-        neworder.payment_type = PaymentType.objects.get(pk=request.data["payment_type"])
-        neworder.completed = False
-        customer = Customer.objects.get(user=request.auth.user)
-        neworder.customer = customer
-        neworder.save()
+        new_order = Order()
+        new_order.created_at = request.data["created_at"]
+        new_order.payment_type = PaymentType.objects.get(pk=request.data["payment_type"])
+        new_order.completed = False
+        new_order.customer = Customer.objects.get(user=request.auth.user)
+        new_order.save()
 
-        serializer = OrderSerializer(neworder, context={'request': request})
-
+        serializer = OrderSerializer(new_order, context={'request': request})
+# At this point, the model instance has been translated into Python native datatypes.
+# To finalize the serialization process we render the data into json.
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
@@ -117,6 +117,9 @@ class Orders(ViewSet):
         Returns:
             Response -- JSON serialized list of Orders
         """
+        # objects.all() is an abstraction that the Object Relational Mapper
+        # (ORM) in Django provides that queries the table holding
+        # all the orders, and returns every row.
         orders = Order.objects.all()
         serializer = OrderSerializer(
             orders,
@@ -124,5 +127,3 @@ class Orders(ViewSet):
             context={'request': request}
         )
         return Response(serializer.data)
-
-

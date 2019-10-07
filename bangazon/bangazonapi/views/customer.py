@@ -10,8 +10,8 @@ from bangazonapi.models import Customer
 """HyperlinkedModelSerializer class
 Author: Scott Silver
 Purpose:  Allows user to communicate with the Bangazon
-database to GET PUT POST and DELETE entries by using hyperlinks to represent
-relationships. Like the Model Serializer, it implements
+database to GET PUT POST and DELETE by using hyperlinking
+between entities. Like the Model Serializer, it implements
 create() and update() methods by default.
 Methods: GET, PUT, POST, DELETE
 """
@@ -27,7 +27,8 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'url', 'username', 'first_name',
-        'last_name', 'email', 'date_joined', 'is_active')
+                  'last_name', 'email', 'date_joined', 'is_active')
+        depth = 1
 
 class CustomerSerializer(serializers.HyperlinkedModelSerializer):
 
@@ -36,9 +37,13 @@ class CustomerSerializer(serializers.HyperlinkedModelSerializer):
     Arguments:
         serializers.HyperlinkedModelSerializer
     """
-
+# Meta class is used to define props to associate with the model
+# that won't be part of the db. Great way to display related
+# properties of a model.
     class Meta:
         model = Customer
+        # HyperlinkedIdentityField is used with HyperlinkedModelSerializer
+        # instead of PrimaryKeyIdentityField(used with Model Serializer)
         url = serializers.HyperlinkedIdentityField(
             view_name='customer',
         )
