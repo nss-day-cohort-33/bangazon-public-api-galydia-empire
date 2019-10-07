@@ -5,7 +5,7 @@
     "fields": {
       "customer_id": 1,
       "merchant_name": "Birky",
-      "account_number": 123456,
+      "account_number": "123456",
       "expiration_date": "2019-11-11",
       "created_at": "2019-09-23T14:06:30.047Z"
     }
@@ -16,7 +16,7 @@
     "fields": {
       "customer_id": 2,
       "merchant_name": "Scott",
-      "account_number": 654321,
+      "account_number": "654321",
       "expiration_date": "2019-11-11",
       "created_at": "2019-09-23T14:06:30.047Z"
     }
@@ -27,7 +27,7 @@
     "fields": {
       "customer_id": 3,
       "merchant_name": "Jeff",
-      "account_number": 7890,
+      "account_number": "7890",
       "expiration_date": "2019-11-11",
       "created_at": "2019-09-23T14:06:30.047Z"
     }
@@ -38,7 +38,7 @@
     "fields": {
       "customer_id": 4,
       "merchant_name": "Matthew",
-      "account_number": 7890,
+      "account_number": "7890",
       "expiration_date": "2019-11-11",
       "created_at": "2019-09-23T14:06:30.047Z"
     }
