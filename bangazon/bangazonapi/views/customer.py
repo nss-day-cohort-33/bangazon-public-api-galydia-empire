@@ -7,13 +7,17 @@ from rest_framework import status
 from django.contrib.auth.models import User
 from bangazonapi.models import Customer
 
-"""
+"""HyperlinkedModelSerializer class
 Author: Scott Silver
-Purpose: Allows user to communicate with the Bangazon database to GET PUT POST and DELETE entries.
+Purpose:  Allows user to communicate with the Bangazon
+database to GET PUT POST and DELETE entries by using hyperlinks to represent
+relationships. Like the Model Serializer, it implements
+create() and update() methods by default.
 Methods: GET, PUT, POST, DELETE
 """
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
+    user = serializers.HyperlinkedRelatedField(many=True, view_name='user-detail', read_only=True)
     """JSON serializer for users
 
     Arguments:
@@ -39,6 +43,10 @@ class CustomerSerializer(serializers.HyperlinkedModelSerializer):
             view_name='customer',
         )
         fields = ('id', 'url', 'user', 'address', 'phone_number')
+        # The default ModelSerializer uses primary keys for relationships,
+        # but you can also easily generate nested representations using the depth option:
+        # It is an integer value that indicates the depth of relationships that should
+        # be traversed before reverting to a flat representation.
         depth = 1
 
 
@@ -62,10 +70,7 @@ class Customers(ViewSet):
     def update(self, request, pk=None):
 
         """Handle PUT requests for a customer
-        Author: Scott Silver
-        Purpose: Allows a user to communicate with the Bangazon database to update  customer's 'is_active property
-        Method:  PUT
-        Returns:
+
             Response -- Empty body with 204 status code
         """
         customer = Customer.objects.get(pk=pk)
