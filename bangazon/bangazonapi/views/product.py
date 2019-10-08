@@ -90,9 +90,38 @@ class Products(ViewSet):
         except Exception as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def list(self, request):
+    def list_twenty(self, request):
         """Handle GET requests to products resource
 
+        Returns:
+            Response -- JSON serialized list of products
+        """
+        products = Product.objects.all()
+        category = self.request.query_params.get('category', None)
+        quantity = self.request.query_params.get('quantity', None)
+        if category is not None:
+            products = products.filter(product_category__id=category)
+
+        if quantity is not None:
+            quantity = int(quantity)
+            length = len(products)
+            new_products = list()
+            count = 0
+            for product in products:
+                count += 1
+                if count - 1 + quantity >= length:
+                    new_products.append(product)
+                    if count == length:
+                        products = new_products
+                        break
+
+        serializer = ProductSerializer(
+            products, many=True, context={'request': request})
+
+        return Response(serializer.data)
+
+    def list(self, request):
+        """Handle GET requests to products resource
         Returns:
             Response -- JSON serialized list of products
         """

@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     """JSON serializer for Users
     Author: Scott Silver
-    Arguments:
+    Arguments:c
         serializers
     """
     class Meta:
