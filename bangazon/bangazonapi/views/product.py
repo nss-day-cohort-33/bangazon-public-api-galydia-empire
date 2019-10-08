@@ -97,8 +97,6 @@ class Products(ViewSet):
             Response -- JSON serialized list of products
         """
         products = Product.objects.all()
-
-        # Support filtering products
         category = self.request.query_params.get('category', None)
         quantity = self.request.query_params.get('quantity', None)
         if category is not None:
@@ -116,6 +114,7 @@ class Products(ViewSet):
                     if count == length:
                         products = new_products
                         break
+
         serializer = ProductSerializer(
             products, many=True, context={'request': request})
 
