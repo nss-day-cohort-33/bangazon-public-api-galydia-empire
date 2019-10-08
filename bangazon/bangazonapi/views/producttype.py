@@ -17,9 +17,10 @@ class ProductTypeSerializer(serializers.HyperlinkedModelSerializer):
         model = ProductType
         url = serializers.HyperlinkedIdentityField(
             view_name='ProductType',
-            lookup_field='id'
+            lookup_field='pk'
         )
-        fields = ('id', 'url', 'name')
+        fields = ('id', 'url', 'name', 'product_set')
+        depth = 2
 
 class ProductTypes(ViewSet):
     """Product types for Bangazon Galaydia Empire"""
