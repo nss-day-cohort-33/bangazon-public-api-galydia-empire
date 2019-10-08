@@ -90,7 +90,7 @@ class Products(ViewSet):
         except Exception as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def list(self, request):
+    def list_twenty(self, request):
         """Handle GET requests to products resource
 
         Returns:
@@ -118,4 +118,17 @@ class Products(ViewSet):
         serializer = ProductSerializer(
             products, many=True, context={'request': request})
 
+        return Response(serializer.data)
+
+    def list(self, request):
+        """Handle GET requests to products resource
+        Returns:
+            Response -- JSON serialized list of products
+        """
+        products = Product.objects.all()
+        serializer = ProductSerializer(
+            products,
+            many=True,
+            context={'request': request}
+        )
         return Response(serializer.data)
