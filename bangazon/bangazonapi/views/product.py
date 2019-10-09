@@ -6,6 +6,15 @@ from rest_framework import serializers
 from rest_framework import status
 from bangazonapi.models import Product, Customer, ProductType
 
+"""HyperlinkedModelSerializer class
+Author: Matthew Caldwell
+Purpose:  Allows user to communicate with the Bangazon
+database to GET PUT POST and DELETE by using hyperlinking
+between entities. Like the Model Serializer, it implements
+create() and update() methods by default.
+Methods: GET, PUT, POST, DELETE, listTwenty(made by Sam)
+"""
+
 
 class ProductSerializer(serializers.HyperlinkedModelSerializer):
     """JSON serializer for products
@@ -19,8 +28,9 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
             view_name='product',
             lookup_field='id'
         )
-        fields = ('id', 'url', 'name', 'price', 'description',
-                  'quantity', 'location', 'created_at', 'customer', 'product_type')
+        fields = ('id', 'url', 'name', 'price', 'description', 'quantity', 'location', 'created_at', 'customer', 'product_type')
+        depth = 2
+        
 
 
 class Products(ViewSet):
@@ -127,6 +137,19 @@ class Products(ViewSet):
             Response -- JSON serialized list of products
         """
         products = Product.objects.all()
+        product_list = list()
+
+        # support filtering by category
+        category = self.request.query_params.get('category', None)
+        if category is not None:
+            products = products.filter(product_type_id=category)
+            for product in products:
+                if product.quantity > 0:
+                    product_list.append(product)
+            products = product_list
+            
+
+
         serializer = ProductSerializer(
             products,
             many=True,
