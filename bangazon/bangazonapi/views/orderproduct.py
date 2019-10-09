@@ -8,6 +8,10 @@ from bangazonapi.models import OrderProduct, Product, Order
 
 
 class OrderProductSerializer(serializers.HyperlinkedModelSerializer):
+
+    # Author: Sam Birky
+    # Purpose: Allow a user to communicate with the Bangazon database to GET POST and DELETE entries.
+    # Methods: GET POST DELETE
     """JSON serializer for orderProducts
 
     Arguments:
