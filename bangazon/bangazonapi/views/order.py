@@ -4,7 +4,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from bangazonapi.models import Order, Customer, PaymentType
+from bangazonapi.models import Order, Customer, PaymentType, OrderProduct
 
 
 
@@ -40,13 +40,24 @@ class Orders(ViewSet):
         Returns:
             Response -- JSON serialized ParkArea instance
         """
-        new_order = Order()
-        new_order.created_at = request.data["created_at"]
-        new_order.payment_type = PaymentType.objects.get(pk=request.data["payment_type"])
-        new_order.customer = Customer.objects.get(user=request.auth.user)
-        new_order.save()
 
-        serializer = OrderSerializer(new_order, context={'request': request})
+        order_item = OrderProduct()
+        order_item.product = Product.objects.get(pk=request.data["product_id"])
+
+        current_customer = Customer.objects.get(pk=request.user.id)
+        order = Order.objects.filter(customer=current_customer, payment_type=None)
+
+        if order.exists():
+            order_item.order = order[0]
+        else:
+            new_order = Order()
+            new_order.customer = current_customer
+            new_order.save()
+            order_item.order = new_order
+        
+        order_item.save()
+
+        serializer = OrderSerializer(order_item, context={'request': request})
 # At this point, the model instance has been translated into Python native datatypes.
 # To finalize the serialization process we render the data into json.
         return Response(serializer.data)
@@ -97,15 +108,23 @@ class Orders(ViewSet):
         """Handle GET requests to orders resource
 
         Returns:
-            Response -- JSON serialized list of Orders
+            Response -- JSON serialized list of orders with customer
         """
-        # objects.all() is an abstraction that the Object Relational Mapper
-        # (ORM) in Django provides that queries the table holding
-        # all the orders, and returns every row.
         orders = Order.objects.all()
-        serializer = OrderSerializer(
-            orders,
-            many=True,
-            context={'request': request}
-        )
+        customer = Customer.objects.get(pk=request.user.id)
+
+        # Sends back all closed orders for the order history view, or the single open order to display in cart view
+        cart = self.request.query_params.get('cart', None)
+        orders = orders.filter(customer_id=customer)
+        print("orders", orders)
+        if cart is not None:
+            orders = orders.filter(payment=None).get()
+            print("orders filtered", orders)
+            serializer = OrderSerializer(
+                orders, many=False, context={'request': request}
+              )
+        else:
+            serializer = OrderSerializer(
+                orders, many=True, context={'request': request}
+              )
         return Response(serializer.data)
