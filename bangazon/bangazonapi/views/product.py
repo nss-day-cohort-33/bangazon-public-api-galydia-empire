@@ -30,7 +30,7 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
         )
         fields = ('id', 'url', 'name', 'price', 'description', 'quantity', 'location', 'created_at', 'customer', 'product_type')
         depth = 2
-        
+
 
 
 class Products(ViewSet):
@@ -141,13 +141,21 @@ class Products(ViewSet):
 
         # support filtering by category
         category = self.request.query_params.get('category', None)
+        location = self.request.query_params.get('location', None)
         if category is not None:
             products = products.filter(product_type_id=category)
             for product in products:
                 if product.quantity > 0:
                     product_list.append(product)
             products = product_list
-            
+
+        if location is not None:
+            products = products.filter(location=location)
+            for product in products:
+                if product.quantity > 0:
+                    product_list.append(product)
+            products = product_list
+
 
 
         serializer = ProductSerializer(
