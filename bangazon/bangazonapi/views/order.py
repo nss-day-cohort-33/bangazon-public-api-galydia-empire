@@ -7,7 +7,6 @@ from rest_framework import status
 from bangazonapi.models import Order, Customer, PaymentType
 
 
-
 class OrderSerializer(serializers.HyperlinkedModelSerializer):
     """
     Author: Scott Silver
@@ -24,7 +23,7 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
             lookup_field='id'
         )
         fields = ('id', 'url', 'created_at', 'payment_type', 'customer')
-        depth = 1
+        # depth = 1
 
 
 class Orders(ViewSet):
@@ -42,7 +41,8 @@ class Orders(ViewSet):
         """
         new_order = Order()
         new_order.created_at = request.data["created_at"]
-        new_order.payment_type = PaymentType.objects.get(pk=request.data["payment_type"])
+        new_order.payment_type = PaymentType.objects.get(
+            pk=request.data["payment_type"])
         new_order.customer = Customer.objects.get(user=request.auth.user)
         new_order.save()
 
@@ -64,7 +64,6 @@ class Orders(ViewSet):
             return HttpResponseServerError(ex)
 
     def update(self, request, pk=None):
-
         """Handle PUT requests for a park area
         Returns:
             Response -- Empty body with 204 status code
