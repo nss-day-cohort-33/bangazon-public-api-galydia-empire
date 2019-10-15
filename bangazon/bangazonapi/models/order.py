@@ -12,7 +12,7 @@ class Order(models.Model):
 
     """
 
-    customer = models.ForeignKey(Customer, on_delete=models.DO_NOTHING)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     payment_type = models.ForeignKey(PaymentType, blank=True, null=True, on_delete=models.DO_NOTHING)
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
 

@@ -8,6 +8,11 @@ from bangazonapi.models import ProductType
 
 
 class ProductTypeSerializer(serializers.HyperlinkedModelSerializer):
+
+    # Author: Sam Birky
+    # Purpose: Allow a user to communicate with the Bangazon database to GET PUT POST and DELETE entries.
+    # Methods: GET POST PUT DELETE
+
     """JSON serializer for product types
 
     Arguments:
