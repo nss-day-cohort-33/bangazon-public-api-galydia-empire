@@ -23,7 +23,7 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
             lookup_field='id'
         )
         fields = ('id', 'url', 'created_at', 'payment_type', 'customer')
-        # depth = 1
+        depth = 1
 
 
 class Orders(ViewSet):
@@ -101,7 +101,9 @@ class Orders(ViewSet):
         # objects.all() is an abstraction that the Object Relational Mapper
         # (ORM) in Django provides that queries the table holding
         # all the orders, and returns every row.
-        orders = Order.objects.all()
+        # orders = Order.objects.all()
+        customer = Customer.objects.get(user=request.auth.user)
+        orders = Order.objects.filter(customer=customer)
         serializer = OrderSerializer(
             orders,
             many=True,
