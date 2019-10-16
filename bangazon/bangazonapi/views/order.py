@@ -9,7 +9,6 @@ from rest_framework.decorators import action
 from .product import ProductSerializer
 
 
-
 class OrderSerializer(serializers.HyperlinkedModelSerializer):
     """
     Author: Scott Silver
@@ -56,7 +55,6 @@ class Orders(ViewSet):
         Returns:
             Response -- JSON serialized ParkArea instance
         """
-
         order_item = OrderProduct()
         order_item.product = Product.objects.get(pk=request.data["product_id"])
 
@@ -93,7 +91,6 @@ class Orders(ViewSet):
             return HttpResponseServerError(ex)
 
     def update(self, request, pk=None):
-
         """Handle PUT requests for a park area
         Returns:
             Response -- Empty body with 204 status code
@@ -135,6 +132,7 @@ class Orders(ViewSet):
         Returns:
             Response -- JSON serialized list of orders with customer
         """
+
         orders = Order.objects.all()
         customer = Customer.objects.get(pk=request.user.id)
 
@@ -169,6 +167,5 @@ class Orders(ViewSet):
 
         serializer = ProductSerializer(products_on_order, many=True, context={'request': request})
         return Response(serializer.data)
-
 
 

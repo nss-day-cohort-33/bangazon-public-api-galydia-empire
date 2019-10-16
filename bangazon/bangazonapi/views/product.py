@@ -28,9 +28,9 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
             view_name='product',
             lookup_field='id'
         )
-        fields = ('id', 'url', 'name', 'price', 'description', 'quantity', 'location', 'created_at', 'customer', 'product_type')
+        fields = ('id', 'url', 'name', 'price', 'description', 'quantity',
+                  'location', 'created_at', 'customer', 'product_type')
         depth = 2
-        
 
 
 class Products(ViewSet):
@@ -49,11 +49,13 @@ class Products(ViewSet):
         new_product.description = request.data["description"]
         new_product.quantity = request.data["quantity"]
         new_product.created_at = request.data["created_at"]
-        new_product.product_type = ProductType.objects.get(pk=request.data["product_type"])
+        new_product.product_type = ProductType.objects.get(
+            pk=request.data["product_type"])
         new_product.location = request.data["location"]
         new_product.save()
 
-        serializer = ProductSerializer(new_product, context={'request': request})
+        serializer = ProductSerializer(
+            new_product, context={'request': request})
 
         return Response(serializer.data)
 
@@ -65,11 +67,11 @@ class Products(ViewSet):
         """
         try:
             single_product = Product.objects.get(pk=pk)
-            serializer = ProductSerializer(single_product, context={'request': request})
+            serializer = ProductSerializer(
+                single_product, context={'request': request})
             return Response(serializer.data)
         except Exception as ex:
             return HttpResponseServerError(ex)
-
 
     def update(self, request, pk=None):
         """Handle PUT requests for an individual product to be edited
@@ -147,8 +149,6 @@ class Products(ViewSet):
                 if product.quantity > 0:
                     product_list.append(product)
             products = product_list
-            
-
 
         serializer = ProductSerializer(
             products,
