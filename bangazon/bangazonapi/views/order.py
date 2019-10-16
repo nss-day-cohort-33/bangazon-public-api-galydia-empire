@@ -7,7 +7,6 @@ from rest_framework import status
 from bangazonapi.models import Order, Customer, PaymentType
 
 
-
 class OrderSerializer(serializers.HyperlinkedModelSerializer):
     """
     Author: Scott Silver
@@ -42,7 +41,8 @@ class Orders(ViewSet):
         """
         new_order = Order()
         new_order.created_at = request.data["created_at"]
-        new_order.payment_type = PaymentType.objects.get(pk=request.data["payment_type"])
+        new_order.payment_type = PaymentType.objects.get(
+            pk=request.data["payment_type"])
         new_order.customer = Customer.objects.get(user=request.auth.user)
         new_order.save()
 
@@ -64,7 +64,6 @@ class Orders(ViewSet):
             return HttpResponseServerError(ex)
 
     def update(self, request, pk=None):
-
         """Handle PUT requests for a park area
         Returns:
             Response -- Empty body with 204 status code
@@ -102,7 +101,9 @@ class Orders(ViewSet):
         # objects.all() is an abstraction that the Object Relational Mapper
         # (ORM) in Django provides that queries the table holding
         # all the orders, and returns every row.
-        orders = Order.objects.all()
+        # orders = Order.objects.all()
+        customer = Customer.objects.get(user=request.auth.user)
+        orders = Order.objects.filter(customer=customer)
         serializer = OrderSerializer(
             orders,
             many=True,

@@ -28,7 +28,8 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
             view_name='product',
             lookup_field='id'
         )
-        fields = ('id', 'url', 'name', 'price', 'description', 'quantity', 'location', 'created_at', 'customer', 'product_type')
+        fields = ('id', 'url', 'name', 'price', 'description', 'quantity',
+                  'location', 'created_at', 'customer', 'product_type')
         depth = 2
 
 
@@ -48,11 +49,13 @@ class Products(ViewSet):
         new_product.description = request.data["description"]
         new_product.quantity = request.data["quantity"]
         new_product.created_at = request.data["created_at"]
-        new_product.product_type = ProductType.objects.get(pk=request.data["product_type"])
+        new_product.product_type = ProductType.objects.get(
+            pk=request.data["product_type"])
         new_product.location = request.data["location"]
         new_product.save()
 
-        serializer = ProductSerializer(new_product, context={'request': request})
+        serializer = ProductSerializer(
+            new_product, context={'request': request})
 
         return Response(serializer.data)
 
@@ -63,11 +66,11 @@ class Products(ViewSet):
         """
         try:
             single_product = Product.objects.get(pk=pk)
-            serializer = ProductSerializer(single_product, context={'request': request})
+            serializer = ProductSerializer(
+                single_product, context={'request': request})
             return Response(serializer.data)
         except Exception as ex:
             return HttpResponseServerError(ex)
-
 
     def update(self, request, pk=None):
         """Handle PUT requests for an individual product to be edited
@@ -128,6 +131,28 @@ class Products(ViewSet):
                     if count == length:
                         products = new_products
                         break
+
+        serializer = ProductSerializer(
+            products, many=True, context={'request': request})
+
+        return Response(serializer.data)
+
+    def list(self, request):
+        """Handle GET requests to products resource
+        Returns:
+            Response -- JSON serialized list of products
+        """
+        products = Product.objects.all()
+        product_list = list()
+
+        # support filtering by category
+        category = self.request.query_params.get('category', None)
+        if category is not None:
+            products = products.filter(product_type_id=category)
+            for product in products:
+                if product.quantity > 0:
+                    product_list.append(product)
+            products = product_list
 
         serializer = ProductSerializer(
             products,
