@@ -132,6 +132,14 @@ class Products(ViewSet):
                         products = new_products
                         break
 
+        location = self.request.query_params.get('location', None)
+        if location is not None:
+            products = products.filter(location=location)
+            for product in products:
+                if product.quantity > 0:
+                    product_list.append(product)
+            products = product_list
+
         serializer = ProductSerializer(
             products, many=True, context={'request': request})
 
