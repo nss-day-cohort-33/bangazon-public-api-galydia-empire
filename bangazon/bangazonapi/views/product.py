@@ -137,30 +137,6 @@ class Products(ViewSet):
 
         return Response(serializer.data)
 
-    def list(self, request):
-        """Handle GET requests to products resource
-        Returns:
-            Response -- JSON serialized list of products
-        """
-        products = Product.objects.all()
-        product_list = list()
-
-        # support filtering by category
-        category = self.request.query_params.get('category', None)
-        if category is not None:
-            products = products.filter(product_type_id=category)
-            for product in products:
-                if product.quantity > 0:
-                    product_list.append(product)
-            products = product_list
-
-        serializer = ProductSerializer(
-            products,
-            many=True,
-            context={'request': request}
-        )
-        return Response(serializer.data)
-
     # Custom Action that supports filtering products by customer by creating a new route
     @action(methods=['get'], detail=False)
     def myproduct(self, request):
