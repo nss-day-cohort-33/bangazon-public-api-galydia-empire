@@ -1,4 +1,4 @@
 {
-    "python.pythonPath": "BangazonEnv\\Scripts\\python.exe",
+    "python.pythonPath": "bangazonEnv/bin/python",
     "python.linting.pylintEnabled": true
 }

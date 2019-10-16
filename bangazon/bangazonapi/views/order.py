@@ -4,7 +4,9 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
-from bangazonapi.models import Order, Customer, PaymentType, OrderProduct
+from bangazonapi.models import Order, Customer, PaymentType, OrderProduct, Product
+from rest_framework.decorators import action
+from .product import ProductSerializer
 
 
 
@@ -29,11 +31,25 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
 
 class Orders(ViewSet):
     """Orders for Bangazon Galaydia Empire
-    Author: Scott Silver
+    Author: Scott Silver & Matthew Caldwell
     Purpose: Allows user to communicate with the Bangazon
     database to GET PUT POST and DELETE entries.
     Methods: GET, PUT, POST, DELETE
     """
+
+    @action(methods=['get'], detail=False)
+    def current(self, request):
+        customer = Customer.objects.get(user=request.auth.user)       
+        try:
+            my_order = Order.objects.filter(customer=customer, payment_type_id=None).get()
+            serializer = OrderSerializer(my_order, many=False, context={'request': request})
+            return Response(serializer.data)
+        except Order.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as ex:
+            return HttpResponseServerError(ex)
+
+
 
     def create(self, request):
         """Handle POST operations
@@ -67,9 +83,11 @@ class Orders(ViewSet):
         Returns:
             Response -- JSON serialized order
         """
+        customer = Customer.objects.get(user=request.auth.user)
+        
         try:
-            order = Order.objects.get(pk=pk)
-            serializer = OrderSerializer(order, context={'request': request})
+            my_order = Order.objects.filter(customer=customer, payment_type_id=None)
+            serializer = OrderSerializer(my_order, context={'request': request})
             return Response(serializer.data)
         except Exception as ex:
             return HttpResponseServerError(ex)
@@ -83,7 +101,14 @@ class Orders(ViewSet):
 
         order = Order.objects.get(pk=pk)
         order.payment_type = request.data["payment_type"]
+        products_on_order = Product.objects.filter(cart__order=order)
         order.save()
+
+        for product in products_on_order:
+            product.quantity -= 1
+            product.save()
+
+
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
@@ -128,3 +153,22 @@ class Orders(ViewSet):
                 orders, many=True, context={'request': request}
               )
         return Response(serializer.data)
+
+
+    # Example request:
+    #   http://localhost:8000/orders/cart
+    @action(methods=['get'], detail=False)
+    def cart(self, request):
+        current_user = Customer.objects.get(user=request.auth.user)
+
+        try:
+            open_order = Order.objects.get(customer=current_user, payment_type=None)
+            products_on_order = Product.objects.filter(cart__order=open_order)
+        except Order.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ProductSerializer(products_on_order, many=True, context={'request': request})
+        return Response(serializer.data)
+
+
+
