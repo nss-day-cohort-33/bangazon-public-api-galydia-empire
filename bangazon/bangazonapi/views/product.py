@@ -1,6 +1,7 @@
 """View module for handling requests about products"""
 from django.http import HttpResponseServerError
 from rest_framework.viewsets import ViewSet
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
@@ -18,7 +19,6 @@ Methods: GET, PUT, POST, DELETE, listTwenty(made by Sam)
 
 class ProductSerializer(serializers.HyperlinkedModelSerializer):
     """JSON serializer for products
-
     Arguments:
         serializers.HyperlinkedModelSerializer
     """
@@ -33,12 +33,12 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
         depth = 2
 
 
+
 class Products(ViewSet):
     """Products for Bangazon Galaydia Empire"""
 
     def create(self, request):
         """Handle POST operations
-
         Returns:
             Response -- JSON serialized Product instance
         """
@@ -61,7 +61,6 @@ class Products(ViewSet):
 
     def retrieve(self, request, pk=None):
         """Handle GET requests for single product
-
         Returns:
             Response -- JSON serialized park area instance
         """
@@ -75,7 +74,6 @@ class Products(ViewSet):
 
     def update(self, request, pk=None):
         """Handle PUT requests for an individual product to be edited
-
         Returns:
             Response -- Empty body with 204 status code
         """
@@ -87,7 +85,6 @@ class Products(ViewSet):
 
     def destroy(self, request, pk=None):
         """Handle DELETE requests for a single product
-
         Returns:
             Response -- 200, 404, or 500 status code
         """
@@ -102,36 +99,6 @@ class Products(ViewSet):
 
         except Exception as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    def list_twenty(self, request):
-        """Handle GET requests to products resource
-
-        Returns:
-            Response -- JSON serialized list of products
-        """
-        products = Product.objects.all()
-        category = self.request.query_params.get('category', None)
-        quantity = self.request.query_params.get('quantity', None)
-        if category is not None:
-            products = products.filter(product_category__id=category)
-
-        if quantity is not None:
-            quantity = int(quantity)
-            length = len(products)
-            new_products = list()
-            count = 0
-            for product in products:
-                count += 1
-                if count - 1 + quantity >= length:
-                    new_products.append(product)
-                    if count == length:
-                        products = new_products
-                        break
-
-        serializer = ProductSerializer(
-            products, many=True, context={'request': request})
-
-        return Response(serializer.data)
 
     def list(self, request):
         """Handle GET requests to products resource
@@ -150,9 +117,35 @@ class Products(ViewSet):
                     product_list.append(product)
             products = product_list
 
+        # support filtering by quantity
+        quantity = self.request.query_params.get('quantity', None)
+        if quantity is not None:
+            quantity = int(quantity)
+            length = len(products)
+            new_products = list()
+            count = 0
+            for product in products:
+                count += 1
+                if count - 1 + quantity >= length:
+                    new_products.append(product)
+                    if count == length:
+                        products = new_products
+                        break
+
         serializer = ProductSerializer(
-            products,
-            many=True,
-            context={'request': request}
-        )
+            products, many=True, context={'request': request})
+
+        return Response(serializer.data)
+
+    # Custom Action that supports filtering products by customer by creating a new route
+    @action(methods=['get'], detail=False)
+    def myproduct(self, request):
+
+        try:
+            customer = Customer.objects.get(user=request.auth.user)
+            products_of_customer = Product.objects.filter(customer=customer)
+        except Product.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ProductSerializer(products_of_customer, many=True, context={'request': request})
         return Response(serializer.data)
