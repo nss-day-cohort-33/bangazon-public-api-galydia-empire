@@ -18,7 +18,7 @@ class Product(models.Model):
     quantity = models.IntegerField()
     location = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="myproducts")
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     product_type = models.ForeignKey(ProductType, on_delete=models.DO_NOTHING)
 
     class Meta:
