@@ -186,3 +186,20 @@ class Orders(ViewSet):
             return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
         except Exception as ex:
             return HttpResponseServerError(ex)
+
+    # Example request:
+    #   http://localhost:8000/orders/carthistory
+    @action(methods=['get'], detail=False)
+    def carthistory(self, request):
+        order_id = self.request.query_params.get('order', None)
+        current_user = Customer.objects.get(user=request.auth.user)
+
+        try:
+            old_order = Order.objects.get(pk=order_id)
+            products_on_order = Product.objects.filter(cart__order=old_order)
+        except Order.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ProductSerializer(
+            products_on_order, many=True, context={'request': request})
+        return Response(serializer.data)
