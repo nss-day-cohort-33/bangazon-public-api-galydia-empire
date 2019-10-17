@@ -29,7 +29,7 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
             lookup_field='id'
         )
         fields = ('id', 'url', 'name', 'price', 'description', 'quantity',
-                  'location', 'created_at', 'customer', 'product_type')
+                  'location', 'created_at', 'customer', 'product_type', 'total_sold')
         depth = 2
 
 
@@ -139,6 +139,8 @@ class Products(ViewSet):
                 if product.quantity > 0:
                     product_list.append(product)
             products = product_list
+
+        aproduct = list(products)[0]
 
         serializer = ProductSerializer(
             products, many=True, context={'request': request})

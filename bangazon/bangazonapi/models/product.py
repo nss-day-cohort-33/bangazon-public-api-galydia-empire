@@ -2,6 +2,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from .customer import Customer
 from .producttype import ProductType
+from .orderproduct import OrderProduct
 
 """
 Author: Galaydia Team
@@ -26,5 +27,6 @@ class Product(models.Model):
         verbose_name = ("product")
         verbose_name_plural = ("products")
 
-
-
+    @property
+    def total_sold(self):
+        return OrderProduct.objects.filter(product=self, order__payment_type__isnull=False).count()
