@@ -155,7 +155,7 @@ class Orders(ViewSet):
 
     # Example request:
     #   http://localhost:8000/orders/cart
-    @action(methods=['get',"put"], detail=False)
+    @action(methods=['get','put'], detail=False)
     def cart(self, request):
         if request.method =="GET":
             current_user = Customer.objects.get(user=request.auth.user)
@@ -171,12 +171,21 @@ class Orders(ViewSet):
 
         if request.method == "PUT":
             # request.data["product_id"]
-            open_order.product = request.data["product_id"]
-            product = Product.objects.all()
-            # find order for customer
             current_user = Customer.objects.get(user=request.auth.user)
-            # thing_to_delete = OrderProduct.objects.filter(order=open_order, product=product)[0]
+            product = Product.objects.get(pk=request.data["product_id"])
             try:
-                open_order.product = OrderProduct.objects.filter(order=open_order, product=product)[0]
-            # things_to_delete.delete()
+                open_order = Order.objects.get(customer=current_user, payment_type=None)
+                open_order.product = product
 
+                products_on_order = OrderProduct.objects.filter(order=open_order, product=open_order.product)[0]
+
+            except Product.DoesNotExist as ex:
+                return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+
+            # find order for customer
+            # thing_to_delete = OrderProduct.objects.filter(order=open_order, product=product)[0]
+            # things_to_delete.delete()
+            products_on_order.delete()
+
+            serializer = ProductSerializer(products_on_order, many=True, context={'request': request})
+            return Response(serializer.data)
