@@ -38,7 +38,7 @@ class Orders(ViewSet):
 
     @action(methods=['get'], detail=False)
     def current(self, request):
-        customer = Customer.objects.get(user=request.auth.user)       
+        customer = Customer.objects.get(user=request.auth.user)
         try:
             my_order = Order.objects.filter(customer=customer, payment_type_id=None).get()
             serializer = OrderSerializer(my_order, many=False, context={'request': request})
@@ -68,7 +68,7 @@ class Orders(ViewSet):
             new_order.customer = current_customer
             new_order.save()
             order_item.order = new_order
-        
+
         order_item.save()
 
         serializer = OrderSerializer(order_item, context={'request': request})
@@ -82,7 +82,7 @@ class Orders(ViewSet):
             Response -- JSON serialized order
         """
         customer = Customer.objects.get(user=request.auth.user)
-        
+
         try:
             my_order = Order.objects.filter(customer=customer, payment_type_id=None)
             serializer = OrderSerializer(my_order, context={'request': request})
@@ -155,17 +155,28 @@ class Orders(ViewSet):
 
     # Example request:
     #   http://localhost:8000/orders/cart
-    @action(methods=['get'], detail=False)
+    @action(methods=['get',"put"], detail=False)
     def cart(self, request):
-        current_user = Customer.objects.get(user=request.auth.user)
+        if request.method =="GET":
+            current_user = Customer.objects.get(user=request.auth.user)
 
-        try:
-            open_order = Order.objects.get(customer=current_user, payment_type=None)
-            products_on_order = Product.objects.filter(cart__order=open_order)
-        except Order.DoesNotExist as ex:
-            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+            try:
+                open_order = Order.objects.get(customer=current_user, payment_type=None)
+                products_on_order = Product.objects.filter(cart__order=open_order)
+            except Order.DoesNotExist as ex:
+                return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = ProductSerializer(products_on_order, many=True, context={'request': request})
-        return Response(serializer.data)
+            serializer = ProductSerializer(products_on_order, many=True, context={'request': request})
+            return Response(serializer.data)
 
+        if request.method == "PUT":
+            # request.data["product_id"]
+            open_order.product = request.data["product_id"]
+            product = Product.objects.all()
+            # find order for customer
+            current_user = Customer.objects.get(user=request.auth.user)
+            # thing_to_delete = OrderProduct.objects.filter(order=open_order, product=product)[0]
+            try:
+                open_order.product = OrderProduct.objects.filter(order=open_order, product=product)[0]
+            # things_to_delete.delete()
 
