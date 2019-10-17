@@ -5,7 +5,8 @@ from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
 from bangazonapi.models import OrderProduct, Product, Order
-
+from .product import ProductSerializer
+from .order import OrderSerializer
 
 class OrderProductSerializer(serializers.HyperlinkedModelSerializer):
 
@@ -17,6 +18,7 @@ class OrderProductSerializer(serializers.HyperlinkedModelSerializer):
     Arguments:
         serializers.HyperlinkedModelSerializer
     """
+
     class Meta:
         model = OrderProduct
         url = serializers.HyperlinkedIdentityField(
@@ -78,6 +80,15 @@ class OrderProducts(ViewSet):
         Returns:
             Response -- 200, 404, or 500 status code
         """
+        order_products = OrderProduct.objects.all()
+
+
+        productId = self.request.query_params.get('product_id', None)
+        # order = self.request.query_params.get('order_id', None)
+
+        if productId is not None:
+            orderProducts = order_products.filter(product_id=productId)
+
         try:
             order_product = OrderProduct.objects.get(pk=pk)
             order_product.delete()

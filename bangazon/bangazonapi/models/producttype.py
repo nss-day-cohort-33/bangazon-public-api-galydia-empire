@@ -1,12 +1,12 @@
 from django.db import models
 
-"""
-Author: Galaydia Team
-Purpose: Single source of information about Product Type Data with essential fields to be stored in database.
-This model maps to a Product Type database table.
-Method: None
+# """
+# Author: Galaydia Team
+# Purpose: Single source of information about Product Type Data with essential fields to be stored in database.
+# This model maps to a Product Type database table.
+# Method: None
 
-"""
+# """
 
 class ProductType(models.Model):
 
