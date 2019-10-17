@@ -100,7 +100,7 @@ class Orders(ViewSet):
         """
 
         order = Order.objects.get(pk=pk)
-        order.payment_type = request.data["payment_type"]
+        order.payment_type_id = request.data["payment_type"]
         products_on_order = Product.objects.filter(cart__order=order)
         order.save()
 
