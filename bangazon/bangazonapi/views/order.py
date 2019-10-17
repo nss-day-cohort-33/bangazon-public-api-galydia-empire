@@ -178,9 +178,9 @@ class Orders(ViewSet):
         customer = Customer.objects.get(user=request.auth.user)
         try:
             my_order = Order.objects.filter(
-                customer=customer, payment_type_id=True).get()
+                customer=customer, payment_type__isnull=False)
             serializer = OrderSerializer(
-                my_order, many=False, context={'request': request})
+                my_order, many=True, context={'request': request})
             return Response(serializer.data)
         except Order.DoesNotExist as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
