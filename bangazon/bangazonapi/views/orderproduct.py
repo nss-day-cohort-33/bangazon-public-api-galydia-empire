@@ -71,16 +71,6 @@ class OrderProducts(ViewSet):
         except Exception as ex:
             return HttpResponseServerError(ex)
 
-    # def update(self, request, pk=None):
-    #     """Handle PUT requests for a payment type
-
-    #     Returns:
-    #         Response -- Empty body with 204 status code
-    #     """
-    #     order_product = OrderProduct.objects.get(pk=pk)
-    #     order_product.save()
-
-    #     return Response({}, status=status.HTTP_204_NO_CONTENT)
 
     def destroy(self, request, pk=None):
         """Handle DELETE requests for a single order product

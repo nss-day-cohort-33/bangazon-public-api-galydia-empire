@@ -71,10 +71,7 @@ class Orders(ViewSet):
         
         order_item.save()
 
-        serializer = OrderSerializer(order_item, context={'request': request})
-# At this point, the model instance has been translated into Python native datatypes.
-# To finalize the serialization process we render the data into json.
-        return Response(serializer.data)
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
 
     def retrieve(self, request, pk=None):
         """Handle GET requests for order
@@ -102,10 +99,9 @@ class Orders(ViewSet):
         order.save()
 
         for product in products_on_order:
-            product.quantity -= 1
-            product.save()
-
-
+            if product.quantity > 0:
+                product.quantity -= 1
+                product.save()
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
@@ -138,7 +134,7 @@ class Orders(ViewSet):
 
         # Sends back all closed orders for the order history view, or the single open order to display in cart view
         cart = self.request.query_params.get('cart', None)
-        orders = orders.filter(customer_id=customer)
+        orders = orders.filter(customer=customer)
         print("orders", orders)
         if cart is not None:
             orders = orders.filter(payment=None).get()
