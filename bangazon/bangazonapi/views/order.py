@@ -215,7 +215,6 @@ class Orders(ViewSet):
     @action(methods=['get'], detail=False)
     def carthistory(self, request):
         order_id = self.request.query_params.get('order', None)
-        current_user = Customer.objects.get(user=request.auth.user)
 
         try:
             old_order = Order.objects.get(pk=order_id)
@@ -225,16 +224,24 @@ class Orders(ViewSet):
 
         serializer = ProductSerializer(
             products_on_order, many=True, context={'request': request})
-        return Response(serializer.data)
 
-        try:
-            open_order = Order.objects.get(
-                customer=current_user, payment_type=None)
-            products_on_order = Product.objects.filter(
-                cart__order=open_order)
-        except Order.DoesNotExist as ex:
-            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+        # Create a dictionary that will hold the values to be sent back to the client side
+        response = {}
 
-        serializer = ProductSerializer(
-            products_on_order, many=True, context={'request': request})
-        return Response(serializer.data)
+        # Create a products key within the dictionary containing the data from the Serializer
+        response["products"] = serializer.data
+
+        # Initialize the total price variable to zero
+        total = 0
+
+        # Loop through the products, add the price of each item to the total variable that was initialized
+        for product in products_on_order:
+            total += product.price
+
+        # Create a total key within the dictionary containing the result of the loop above.
+        response["total"] = total
+
+        # Example format of data being sent back to the client side--
+        # response = {products: [{}.{}.{}], total: 35.00}
+
+        return Response(response)
