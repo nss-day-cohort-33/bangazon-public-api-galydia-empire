@@ -72,10 +72,7 @@ class Orders(ViewSet):
 
         order_item.save()
 
-        serializer = OrderSerializer(order_item, context={'request': request})
-# At this point, the model instance has been translated into Python native datatypes.
-# To finalize the serialization process we render the data into json.
-        return Response(serializer.data)
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
 
     def retrieve(self, request, pk=None):
         """Handle GET requests for order
@@ -105,8 +102,9 @@ class Orders(ViewSet):
         order.save()
 
         for product in products_on_order:
-            product.quantity -= 1
-            product.save()
+            if product.quantity > 0:
+                product.quantity -= 1
+                product.save()
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
@@ -139,7 +137,7 @@ class Orders(ViewSet):
 
         # Sends back all closed orders for the order history view, or the single open order to display in cart view
         cart = self.request.query_params.get('cart', None)
-        orders = orders.filter(customer_id=customer)
+        orders = orders.filter(customer=customer)
         print("orders", orders)
         if cart is not None:
             orders = orders.filter(payment=None).get()
@@ -155,9 +153,10 @@ class Orders(ViewSet):
 
     # Example request:
     #   http://localhost:8000/orders/cart
-    @action(methods=['get'], detail=False)
+    @action(methods=['get', 'put'], detail=False)
     def cart(self, request):
-        current_user = Customer.objects.get(user=request.auth.user)
+        if request.method == "GET":
+            current_user = Customer.objects.get(user=request.auth.user)
 
         try:
             open_order = Order.objects.get(
@@ -169,6 +168,30 @@ class Orders(ViewSet):
         serializer = ProductSerializer(
             products_on_order, many=True, context={'request': request})
         return Response(serializer.data)
+
+        if request.method == "PUT":
+            # request.data["product_id"]
+            current_user = Customer.objects.get(user=request.auth.user)
+            product = Product.objects.get(pk=request.data["product_id"])
+            try:
+                open_order = Order.objects.get(
+                    customer=current_user, payment_type=None)
+                open_order.product = product
+
+                products_on_order = OrderProduct.objects.filter(
+                    order=open_order, product=open_order.product)[0]
+
+            except Product.DoesNotExist as ex:
+                return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+
+            # find order for customer
+            # thing_to_delete = OrderProduct.objects.filter(order=open_order, product=product)[0]
+            # things_to_delete.delete()
+            products_on_order.delete()
+
+            serializer = ProductSerializer(
+                products_on_order, many=True, context={'request': request})
+            return Response(serializer.data)
 
     # Created by Joy
     # To filter completed orders (orders with an existing payment type)
@@ -197,6 +220,18 @@ class Orders(ViewSet):
         try:
             old_order = Order.objects.get(pk=order_id)
             products_on_order = Product.objects.filter(cart__order=old_order)
+        except Order.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ProductSerializer(
+            products_on_order, many=True, context={'request': request})
+        return Response(serializer.data)
+
+        try:
+            open_order = Order.objects.get(
+                customer=current_user, payment_type=None)
+            products_on_order = Product.objects.filter(
+                cart__order=open_order)
         except Order.DoesNotExist as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
 
