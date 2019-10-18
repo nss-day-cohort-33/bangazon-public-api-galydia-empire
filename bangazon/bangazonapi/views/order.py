@@ -40,15 +40,15 @@ class Orders(ViewSet):
     def current(self, request):
         customer = Customer.objects.get(user=request.auth.user)
         try:
-            my_order = Order.objects.filter(customer=customer, payment_type_id=None).get()
-            serializer = OrderSerializer(my_order, many=False, context={'request': request})
+            my_order = Order.objects.filter(
+                customer=customer, payment_type_id=None).get()
+            serializer = OrderSerializer(
+                my_order, many=False, context={'request': request})
             return Response(serializer.data)
         except Order.DoesNotExist as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
         except Exception as ex:
             return HttpResponseServerError(ex)
-
-
 
     def create(self, request):
         """Handle POST operations
@@ -59,7 +59,8 @@ class Orders(ViewSet):
         order_item.product = Product.objects.get(pk=request.data["product_id"])
 
         current_customer = Customer.objects.get(pk=request.user.id)
-        order = Order.objects.filter(customer=current_customer, payment_type=None)
+        order = Order.objects.filter(
+            customer=current_customer, payment_type=None)
 
         if order.exists():
             order_item.order = order[0]
@@ -81,8 +82,10 @@ class Orders(ViewSet):
         customer = Customer.objects.get(user=request.auth.user)
 
         try:
-            my_order = Order.objects.filter(customer=customer, payment_type_id=None)
-            serializer = OrderSerializer(my_order, context={'request': request})
+            my_order = Order.objects.filter(
+                customer=customer, payment_type_id=None)
+            serializer = OrderSerializer(
+                my_order, context={'request': request})
             return Response(serializer.data)
         except Exception as ex:
             return HttpResponseServerError(ex)
@@ -141,39 +144,42 @@ class Orders(ViewSet):
             print("orders filtered", orders)
             serializer = OrderSerializer(
                 orders, many=False, context={'request': request}
-              )
+            )
         else:
             serializer = OrderSerializer(
                 orders, many=True, context={'request': request}
-              )
+            )
         return Response(serializer.data)
-
 
     # Example request:
     #   http://localhost:8000/orders/cart
-    @action(methods=['get','put'], detail=False)
+    @action(methods=['get', 'put'], detail=False)
     def cart(self, request):
-        if request.method =="GET":
+        if request.method == "GET":
             current_user = Customer.objects.get(user=request.auth.user)
 
-            try:
-                open_order = Order.objects.get(customer=current_user, payment_type=None)
-                products_on_order = Product.objects.filter(cart__order=open_order)
-            except Order.DoesNotExist as ex:
-                return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+        try:
+            open_order = Order.objects.get(
+                customer=current_user, payment_type=None)
+            products_on_order = Product.objects.filter(cart__order=open_order)
+        except Order.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
 
-            serializer = ProductSerializer(products_on_order, many=True, context={'request': request})
-            return Response(serializer.data)
+        serializer = ProductSerializer(
+            products_on_order, many=True, context={'request': request})
+        return Response(serializer.data)
 
         if request.method == "PUT":
             # request.data["product_id"]
             current_user = Customer.objects.get(user=request.auth.user)
             product = Product.objects.get(pk=request.data["product_id"])
             try:
-                open_order = Order.objects.get(customer=current_user, payment_type=None)
+                open_order = Order.objects.get(
+                    customer=current_user, payment_type=None)
                 open_order.product = product
 
-                products_on_order = OrderProduct.objects.filter(order=open_order, product=open_order.product)[0]
+                products_on_order = OrderProduct.objects.filter(
+                    order=open_order, product=open_order.product)[0]
 
             except Product.DoesNotExist as ex:
                 return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
@@ -183,5 +189,52 @@ class Orders(ViewSet):
             # things_to_delete.delete()
             products_on_order.delete()
 
-            serializer = ProductSerializer(products_on_order, many=True, context={'request': request})
+            serializer = ProductSerializer(
+                products_on_order, many=True, context={'request': request})
             return Response(serializer.data)
+
+    # Created by Joy
+    # To filter completed orders (orders with an existing payment type)
+    # Example request:  http://localhost:8000/orders/completed
+    @action(methods=['get'], detail=False)
+    def completed(self, request):
+        customer = Customer.objects.get(user=request.auth.user)
+        try:
+            my_order = Order.objects.filter(
+                customer=customer, payment_type__isnull=False)
+            serializer = OrderSerializer(
+                my_order, many=True, context={'request': request})
+            return Response(serializer.data)
+        except Order.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as ex:
+            return HttpResponseServerError(ex)
+
+    # Example request:
+    #   http://localhost:8000/orders/carthistory
+    @action(methods=['get'], detail=False)
+    def carthistory(self, request):
+        order_id = self.request.query_params.get('order', None)
+        current_user = Customer.objects.get(user=request.auth.user)
+
+        try:
+            old_order = Order.objects.get(pk=order_id)
+            products_on_order = Product.objects.filter(cart__order=old_order)
+        except Order.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ProductSerializer(
+            products_on_order, many=True, context={'request': request})
+        return Response(serializer.data)
+
+        try:
+            open_order = Order.objects.get(
+                customer=current_user, payment_type=None)
+            products_on_order = Product.objects.filter(
+                cart__order=open_order)
+        except Order.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ProductSerializer(
+            products_on_order, many=True, context={'request': request})
+        return Response(serializer.data)

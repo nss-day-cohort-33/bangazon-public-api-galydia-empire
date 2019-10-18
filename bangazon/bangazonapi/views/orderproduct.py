@@ -28,6 +28,7 @@ class OrderProductSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id', 'url', 'order', 'product')
         depth = 1
 
+
 class OrderProducts(ViewSet):
     """OrderProducts for Bangazon Galaydia Empire"""
 
@@ -56,7 +57,8 @@ class OrderProducts(ViewSet):
         order_product.product = Product.objects.get(pk=request.data["product"])
         order_product.save()
 
-        serializer = OrderProductSerializer(order_product, context={'request': request})
+        serializer = OrderProductSerializer(
+            order_product, context={'request': request})
 
         return Response(serializer.data)
 
@@ -68,7 +70,8 @@ class OrderProducts(ViewSet):
         """
         try:
             single_order_product = OrderProduct.objects.get(pk=pk)
-            serializer = OrderProductSerializer(single_order_product, context={'request': request})
+            serializer = OrderProductSerializer(
+                single_order_product, context={'request': request})
             return Response(serializer.data)
         except Exception as ex:
             return HttpResponseServerError(ex)
