@@ -25,7 +25,7 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
             lookup_field='id'
         )
         fields = ('id', 'url', 'created_at', 'payment_type', 'customer')
-        depth = 1
+        depth = 2
 
 
 class Orders(ViewSet):
@@ -245,3 +245,17 @@ class Orders(ViewSet):
         # response = {products: [{}.{}.{}], total: 35.00}
 
         return Response(response)
+
+    @action(methods=['get'], detail=False)
+    def multipleorders(self, request):
+        try:
+            my_order = Order.objects.filter(
+                payment_type__isnull=True)
+
+            serializer = OrderSerializer(
+                my_order, many=True, context={'request': request})
+            return Response(serializer.data)
+        except Order.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as ex:
+            return HttpResponseServerError(ex)
