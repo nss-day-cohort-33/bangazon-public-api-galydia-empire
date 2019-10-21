@@ -1,5 +1,6 @@
 """View module for handling requests about products"""
 from django.http import HttpResponseServerError
+from django.core.validators import RegexValidator
 from rest_framework.viewsets import ViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -22,6 +23,7 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
     Arguments:
         serializers.HyperlinkedModelSerializer
     """
+
     class Meta:
         model = Product
         url = serializers.HyperlinkedIdentityField(

@@ -1,1 +1,0 @@
-# python-bangazon-api-template
